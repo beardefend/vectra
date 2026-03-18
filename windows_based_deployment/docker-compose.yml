@@ -1,0 +1,41 @@
+# Windows based Docker Compose file for Vectra application
+services:
+  vectra:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vectra
+    restart: unless-stopped
+
+    ports:
+      - "${PORT:-8000}:8000"
+
+    environment:
+      ADMIN_API_KEY: "${ADMIN_API_KEY:-CHANGE_ME_IN_PRODUCTION}"
+      FRESHNESS_THRESHOLD_DAYS: "${FRESHNESS_THRESHOLD_DAYS:-7}"
+      SQLITE_DB_PATH: /app/data/sqlite/clients.db
+      CHROMADB_PATH: /app/data/chroma
+      PORT: "${PORT:-8000}"
+      HOST: 0.0.0.0
+
+    volumes:
+      - vectra_sqlite_data:/app/data/sqlite
+      - vectra_chroma_data:/app/data/chroma
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    networks:
+      - vectra-network
+
+networks:
+  vectra-network:
+    driver: bridge
+
+volumes:
+  vectra_sqlite_data:
+  vectra_chroma_data:

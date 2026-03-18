@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vectra Dashboard — BearDefend</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --lime-400: #a3e635;
+            --lime-500: #84cc16;
+            --cyan-400: #22d3ee;
+            --purple-400: #c084fc;
+            --red-400: #f87171;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-900);
+            color: var(--gray-300);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(163, 230, 53, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(163, 230, 53, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-800);
+            background: linear-gradient(180deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.98) 100%);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            gap: 24px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-tabs {
+            margin-bottom: 0 !important;
+            border-bottom: none !important;
+        }
+
+        .header-tabs .tab {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .header-tabs .tab.active {
+            background: rgba(163, 230, 53, 0.1);
+            border-radius: 4px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--lime-400);
+            letter-spacing: -0.5px;
+        }
+
+        .company-badge {
+            background: var(--gray-800);
+            color: var(--gray-500);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid var(--gray-700);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-badge {
+            background: rgba(163, 230, 53, 0.1);
+            color: var(--lime-400);
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            border: 1px solid rgba(163, 230, 53, 0.3);
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: var(--gray-500);
+            border: 1px solid var(--gray-700);
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            color: var(--red-400);
+            border-color: var(--red-400);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 32px 0;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(163, 230, 53, 0.1), rgba(34, 211, 238, 0.05));
+            border: 1px solid rgba(163, 230, 53, 0.2);
+            border-radius: 12px;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .dashboard-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-100);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--lime-400);
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--lime-400);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            color: var(--lime-400);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* System Status Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .status-section {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-700);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .status-header {
+            font-size: 12px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .status-health {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .status-health.healthy {
+            color: var(--lime-400);
+            background: rgba(163, 230, 53, 0.1);
+        }
+
+        .status-health.warning {
+            color: var(--red-400);
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        .status-comparison {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comparison-label {
+            color: var(--gray-400);
+            font-size: 13px;
+        }
+
+        .comparison-value {
+            color: var(--gray-200);
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .status-sync {
+            text-align: center;
+        }
+
+        .sync-rate {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            color: var(--lime-400);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .sync-details {
+            color: var(--gray-400);
+            font-size: 13px;
+        }
+
+        .status-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-item .stat-label {
+            font-size: 13px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .stat-item .stat-value {
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        /* Tab System */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--gray-800);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            color: var(--gray-500);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab:hover {
+            color: var(--gray-300);
+        }
+
+        .tab.active {
+            color: var(--lime-400);
+            border-bottom-color: var(--lime-400);
+        }
+
+        /* Panel */
+        .panel {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-200);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--gray-900);
+            border: 1px solid var(--gray-700);
+            border-radius: 6px;
+            color: var(--gray-300);
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--lime-400);
+            box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--lime-400);
+            color: var(--gray-900);
+        }
+
+        .btn-primary:hover {
+            background: var(--lime-500);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(163, 230, 53, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--gray-400);
+            border: 1px solid var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            color: var(--gray-300);
+            border-color: var(--gray-600);
+        }
+
+        .btn-danger {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--red-400);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(248, 113, 113, 0.3);
+        }
+
+        /* Grid Layout for Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        /* API Response Area */
+        .response-area {
+            background: #0d1117;
+            border: 1px solid var(--gray-700);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: var(--gray-400);
+        }
+
+        .response-success { color: var(--lime-400); }
+        .response-error { color: var(--red-400); }
+
+        /* Hint/Tooltip */
+        .hint {
+            font-size: 12px;
+            color: var(--gray-600);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .login-box {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: 12px;
+            padding: 48px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 16px;
+        }
+
+        .login-logo h1 {
+            font-size: 24px;
+            color: var(--lime-400);
+            font-weight: 700;
+        }
+
+        .login-logo p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .login-error {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: var(--red-400);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .header-inner { flex-direction: column; gap: 12px; }
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-700);
+        }
+
+        .data-table th {
+            background: var(--gray-900);
+            color: var(--gray-400);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(31, 41, 55, 0.5);
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        .action-edit {
+            background: rgba(34, 211, 238, 0.2);
+            color: var(--cyan-400);
+        }
+
+        .action-delete {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--red-400);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-600);
+        }
+
+        /* Toast Notification System */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: var(--gray-900);
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toast-success {
+            background: var(--lime-400);
+            border-left: 4px solid var(--lime-500);
+        }
+
+        .toast-error {
+            background: var(--red-400);
+            border-left: 4px solid #f87171;
+        }
+
+        .toast-info {
+            background: var(--cyan-400);
+            border-left: 4px solid #22d3ee;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray-900);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            margin-left: 16px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Spinning Circle Animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--gray-600);
+            border-top: 2px solid var(--lime-400);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-100);
+            margin-bottom: 16px;
+        }
+
+        .modal-body {
+            color: var(--gray-400);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+    <body>
+        <!-- Toast Container -->
+        <div id="toast-container" class="toast-container"></div>
+
+        <!-- Modal Dialog -->
+        <div id="modal-overlay" class="modal-overlay">
+            <div class="modal">
+                <div id="modal-header" class="modal-header"></div>
+                <div id="modal-body" class="modal-body"></div>
+                <div class="modal-actions">
+                    <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
+                    <button id="modal-confirm" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <a href="/" style="text-decoration: none; display: inline-block;">
+                    <img src="/static/vectra.png" alt="Logo" style="display: block; margin: 0 auto 16px;">
+                </a>
+                <h1>Vectra</h1>
+                <p>Secure Access Portal</p>
+            </div>
+            <div id="login-error" class="login-error" style="display: none;"></div>
+            <div class="form-group">
+                <label class="form-label">Client ID</label>
+                <input type="text" id="login-client-id" class="form-input" placeholder="Enter your client ID">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Authentication Code</label>
+                <input type="password" id="login-auth-code" class="form-input" placeholder="Enter your authentication code">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" id="login-button" style="width: 100%;">
+                    Access Dashboard
+                </button>
+            </div>
+            <p class="hint" style="text-align: center;">
+                Use "admin" as Client ID with your Admin API Key for admin access
+            </p>
+        </div>
+    </div>
+
+        <!-- Dashboard Page -->
+    <div id="dashboard-page" style="display: none;">
+        <header>
+            <div class="header-inner">
+                <div class="logo-section">
+                    <a href="/" class="logo">
+                        <img src="/static/vectra.png" alt="Logo" class="logo-img">
+                        <span class="logo-text">Vectra</span>
+                    </a>
+                    <span class="company-badge">by BearDefend</span>
+                </div>
+
+                <div class="header-right">
+                    <!-- Tabs moved into header -->
+                    <div class="tabs header-tabs">
+                        <button class="tab active" data-tab="search">Search</button>
+                        <button class="tab" data-tab="products">Products</button>
+                        <button class="tab" data-tab="add-product">Add Product</button>
+                        <button class="tab" data-tab="edit-product">Edit Product</button>
+                        <button class="tab" data-tab="delete-product">Delete</button>
+                        <button class="tab" data-tab="bulk-upload">Bulk Upload</button>
+                        <button class="tab" data-tab="admin" id="admin-tab" style="display: none;">Admin</button>
+                        <button class="tab" data-tab="clients" id="clients-tab" style="display: none;">Clients</button>
+                    </div>
+
+                    <div class="user-info">
+                        <span id="user-badge" class="user-badge"></span>
+                        <button class="btn-logout" onclick="handleLogout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="container">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header">
+                    <div class="dashboard-title">
+                        <h1>Dashboard</h1>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span id="system-status">SYSTEM ONLINE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid (Admin Only) -->
+                <div class="stats-grid" id="admin-stats-grid" style="display: none;">
+                    <div class="stat-card">
+                        <div id="stat-products" class="stat-value">0</div>
+                        <div class="stat-label">Total Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="stat-clients" class="stat-value">0</div>
+                        <div class="stat-label">Registered Clients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="stat-collections" class="stat-value">0</div>
+                        <div class="stat-label">Collections</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="stat-sync" class="stat-value">100%</div>
+                        <div class="stat-label">Sync Status</div>
+                    </div>
+                </div>
+
+                <!-- Client Stats (Non-Admin) -->
+                <div class="stats-grid" id="client-stats-grid" style="display: none;">
+                     <div class="stat-card">
+                        <div id="client-stat-products" class="stat-value">0</div>
+                        <div class="stat-label">My Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="client-stat-health" class="stat-value">Healthy</div>
+                        <div class="stat-label">Database Health</div>
+                    </div>
+                </div>
+
+                <!-- Tab: Search -->
+                <div id="tab-search" class="tab-content active">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🔍 Search Products</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group" id="search-client-group" style="display: none;">
+                                <label class="form-label">Client</label>
+                                <select id="search-client-select" class="form-input">
+                                    <option value="">Select a client...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Search Query</label>
+                                <input type="text" id="search-query" class="form-input" placeholder="Enter keywords...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Max Results</label>
+                                <input type="number" id="search-max-result" class="form-input" value="10" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Max Price</label>
+                                <input type="number" id="search-max-price" class="form-input" placeholder="Optional" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Min Price</label>
+                                <input type="number" id="search-min-price" class="form-input" placeholder="Optional" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <input type="text" id="search-category" class="form-input" placeholder="Optional">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Brand</label>
+                                <input type="text" id="search-brand" class="form-input" placeholder="Optional">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Use Case</label>
+                                <input type="text" id="search-use-case" class="form-input" placeholder="Optional">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="searchProducts()">Search</button>
+                        <p class="hint">Use keywords to find products. Filters are optional for refined results.</p>
+                        
+                        <div id="search-results" style="margin-top: 24px;"></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Products -->
+                <div id="tab-products" class="tab-content">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">📋 Product Inventory</div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <select id="products-client-select" class="form-input" style="width: 150px; display: none;">
+                                    <option value="">Select client...</option>
+                                </select>
+                                <button class="btn btn-secondary" onclick="refreshProducts()">Refresh</button>
+                            </div>
+                        </div>
+                        <div id="products-table-container"></div>
+                        <div id="products-pagination" style="margin-top: 16px; display: flex; justify-content: center; gap: 12px;"></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Add Product -->
+                <div id="tab-add-product" class="tab-content">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">➕ Add New Product</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group" id="add-product-client-group" style="display: none;">
+                                <label class="form-label">Target Client *</label>
+                                <select id="add-product-client-select" class="form-input">
+                                    <option value="">Select a client...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product ID *</label>
+                                <input type="text" id="add-product-id" class="form-input" placeholder="Unique identifier">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Product Name *</label>
+                                <input type="text" id="add-product-name" class="form-input" placeholder="Product name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <input type="text" id="add-product-category" class="form-input" placeholder="Category">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Subcategory *</label>
+                                <input type="text" id="add-product-subcategory" class="form-input" placeholder="Subcategory">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Brand *</label>
+                                <input type="text" id="add-product-brand" class="form-input" placeholder="Brand name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Price *</label>
+                                <input type="number" id="add-product-price" class="form-input" placeholder="Price" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Currency *</label>
+                                <input type="text" id="add-product-currency" class="form-input" placeholder="USD" value="USD">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Updated *</label>
+                                <input type="date" id="add-product-updated" class="form-input">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Specifications</label>
+                                <input type="text" id="add-product-specs" class="form-input" placeholder="Technical specifications">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Description</label>
+                                <input type="text" id="add-product-description" class="form-input" placeholder="Product description">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Use Case</label>
+                                <input type="text" id="add-product-use-case" class="form-input" placeholder="Primary use case">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Product URL</label>
+                                <input type="text" id="add-product-url" class="form-input" placeholder="https://example.com/product">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="addProduct()">Add Product</button>
+                        <p class="hint">All fields marked with * are required. Ensure unique Product ID.</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Edit Product -->
+                <div id="tab-edit-product" class="tab-content">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">✏️ Edit Product</div>
+                        </div>
+                        <div class="form-group" id="edit-product-client-group" style="display: none;">
+                            <label class="form-label">Client</label>
+                            <select id="edit-product-client-select" class="form-input">
+                                <option value="">Select a client...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Product ID to Edit</label>
+                            <input type="text" id="edit-product-id" class="form-input" placeholder="Enter Product ID">
+                        </div>
+                        <button class="btn btn-secondary" onclick="loadProductForEdit()">Load Product</button>
+                        
+                        <div id="edit-form-container" style="margin-top: 24px; display: none;">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Product Name</label>
+                                    <input type="text" id="edit-product-name" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <input type="text" id="edit-product-category" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Subcategory</label>
+                                    <input type="text" id="edit-product-subcategory" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Brand</label>
+                                    <input type="text" id="edit-product-brand" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Price</label>
+                                    <input type="number" id="edit-product-price" class="form-input" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Currency</label>
+                                    <input type="text" id="edit-product-currency" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Updated</label>
+                                    <input type="date" id="edit-product-updated" class="form-input">
+                                </div>
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label class="form-label">Specifications</label>
+                                    <input type="text" id="edit-product-specs" class="form-input">
+                                </div>
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label class="form-label">Description</label>
+                                    <input type="text" id="edit-product-description" class="form-input">
+                                </div>
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label class="form-label">Use Case</label>
+                                    <input type="text" id="edit-product-use-case" class="form-input">
+                                </div>
+                                <div class="form-group" style="grid-column: span 2;">
+                                    <label class="form-label">Product URL</label>
+                                    <input type="text" id="edit-product-url" class="form-input">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="updateProduct()">Update Product</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Delete Product -->
+                <div id="tab-delete-product" class="tab-content">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🗑️ Delete Products</div>
+                        </div>
+                        <div class="form-group" id="delete-product-client-group" style="display: none;">
+                            <label class="form-label">Client</label>
+                            <select id="delete-product-client-select" class="form-input">
+                                <option value="">Select a client...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Product ID to Delete</label>
+                            <input type="text" id="delete-product-id" class="form-input" placeholder="Enter Product ID">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Auth Code</label>
+                            <input type="password" id="delete-auth-code" class="form-input" placeholder="Your auth code">
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-danger" onclick="deleteSingleProduct()">Delete Product</button>
+                            <button class="btn btn-danger" onclick="clearAllProducts()">Clear All Products</button>
+                        </div>
+                        <p class="hint">Auth code is required for confirmation.</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Bulk Upload -->
+                <div id="tab-bulk-upload" class="tab-content">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">📤 Bulk Upload Products</div>
+                        </div>
+                        <div class="form-group" id="bulk-upload-client-group" style="display: none;">
+                            <label class="form-label">Target Client</label>
+                            <select id="bulk-upload-client-select" class="form-input">
+                                <option value="">Select a client...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Upload Mode</label>
+                            <select id="bulk-upload-mode" class="form-input">
+                                <option value="append">Append - Add to existing products</option>
+                                <option value="replace">Replace - Clear existing and add new</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CSV File</label>
+                            <input type="file" id="bulk-upload-file" class="form-input" accept=".csv">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Auth Code</label>
+                            <input type="password" id="bulk-upload-auth-code" class="form-input" placeholder="Your auth code">
+                        </div>
+                        <button class="btn btn-primary" onclick="handleBulkUpload()">Upload CSV</button>
+                        <p class="hint">CSV must include columns: product_id, product_name, category, subcategory, brand, price, currency, specs, description, use_case, product_url, last_updated</p>
+                        <p class="hint">Format: YYYY-MM-DD for last_updated</p>
+                        
+                        <!-- Progress Section -->
+                        <div id="upload-progress" style="margin-top: 24px; display: none;">
+                            <div class="panel-header">
+                                <div class="panel-title">📤 Upload Progress</div>
+                            </div>
+                            <div id="progress-status" style="padding: 16px; background: var(--gray-900); border-radius: 6px; margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
+                                    <span style="display: flex; align-items: center;">
+                                        <span id="progress-spinner" class="spinner" style="display: none;"></span>
+                                        <span id="progress-text">Processing...</span>
+                                    </span>
+                                    <span id="progress-percentage">0%</span>
+                                </div>
+                                <div style="width: 100%; height: 8px; background: var(--gray-700); border-radius: 4px; overflow: hidden;">
+                                    <div id="progress-bar" style="width: 0%; height: 100%; background: var(--lime-400); transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                            <div id="upload-result" class="response-area" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Admin -->
+                <div id="tab-admin" class="tab-content">
+                    <!-- Client Management -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">👥 Client Management</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Client ID</label>
+                                <input type="text" id="admin-client-id" class="form-input" placeholder="New client ID">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Auth Code</label>
+                                <input type="text" id="admin-client-auth" class="form-input" placeholder="Auth code">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="btn btn-primary" onclick="createClient()">Create Client</button>
+                            <button class="btn btn-danger" onclick="deleteClient()">Delete Client</button>
+                        </div>
+                    </div>
+
+                    <!-- Database Operations -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">🔧 Database Operations</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Select Client for Rebuild</label>
+                                <select id="rebuild-client-select" class="form-input">
+                                    <option value="">Select a client...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="btn btn-secondary" onclick="rebuildCollection()">Rebuild Collection</button>
+                            <button class="btn btn-secondary" onclick="fixDatabaseIssues()">Fix Database Issues</button>
+                        </div>
+                        <p class="hint">Rebuild: Sync ChromaDB from SQLite | Fix: Clean orphaned collections</p>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">📊 System Status</div>
+                            <button class="btn btn-secondary" onclick="refreshStatus()">Refresh</button>
+                        </div>
+                        <div id="system-status-container"></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Clients -->
+                <div id="tab-clients" class="tab-content">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title">👥 Client Management</div>
+                            <button class="btn btn-secondary" onclick="refreshClients()">Refresh</button>
+                        </div>
+                        <div id="clients-table-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Session state
+        let sessionData = {
+            sessionId: null,
+            userType: null,
+            clientId: null
+        };
+
+        // Handle Login Function (must be defined before use in onclick)
+        async function handleLogin() {
+            console.log('handleLogin called');
+            const clientId = document.getElementById('login-client-id').value;
+            const authCode = document.getElementById('login-auth-code').value;
+            
+            console.log('Client ID:', clientId);
+            console.log('Auth Code:', authCode);
+            
+            if (!clientId || !authCode) {
+                document.getElementById('login-error').textContent = 'Please enter Client ID and Authentication Code';
+                document.getElementById('login-error').style.display = 'block';
+                return;
+            }
+
+            try {
+                console.log('Sending login request...');
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ client_id: clientId, auth_code: authCode })
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    console.log('Login successful, showing dashboard...');
+                    sessionData = {
+                        sessionId: data.session_id,
+                        userType: data.user_type,
+                        clientId: clientId
+                    };
+                    localStorage.setItem('vectra_session', JSON.stringify(sessionData));
+                    showDashboard();
+                } else {
+                    document.getElementById('login-error').textContent = data.message || 'Login failed';
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('login-error').textContent = 'Connection error. Please try again.';
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for existing session
+            const savedSession = localStorage.getItem('vectra_session');
+            if (savedSession) {
+                sessionData = JSON.parse(savedSession);
+                showDashboard();
+            } else {
+                showLogin();
+            }
+
+            // Set default date for product
+            document.getElementById('add-product-updated').valueAsDate = new Date();
+
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Login button click handler
+            document.getElementById('login-button').addEventListener('click', handleLogin);
+            
+            // Enter key handler for login form
+            document.getElementById('login-client-id').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+            
+            document.getElementById('login-auth-code').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(toast);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Modal Dialog System
+        function showModal(title, body, onConfirm, onCancel) {
+            const overlay = document.getElementById('modal-overlay');
+            const modalHeader = document.getElementById('modal-header');
+            const modalBody = document.getElementById('modal-body');
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+
+            modalHeader.textContent = title;
+            modalBody.textContent = body;
+            overlay.classList.add('active');
+
+            const close = () => {
+                overlay.classList.remove('active');
+                confirmBtn.onclick = null;
+                cancelBtn.onclick = null;
+            };
+
+            confirmBtn.onclick = () => {
+                close();
+                if (onConfirm) onConfirm();
+            };
+
+            cancelBtn.onclick = () => {
+                close();
+                if (onCancel) onCancel();
+            };
+        }
+
+        function showNotificationModal(message) {
+            const overlay = document.getElementById('modal-overlay');
+            const modalHeader = document.getElementById('modal-header');
+            const modalBody = document.getElementById('modal-body');
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+
+            modalHeader.textContent = 'Notification';
+            modalBody.textContent = message;
+            overlay.classList.add('active');
+
+            // Show only OK button (confirm button)
+            confirmBtn.textContent = 'OK';
+            cancelBtn.style.display = 'none';
+
+            // Return a promise that resolves when user clicks OK
+            return new Promise((resolve) => {
+                confirmBtn.onclick = () => {
+                    overlay.classList.remove('active');
+                    // Reset button text and visibility for future use
+                    confirmBtn.textContent = 'Confirm';
+                    cancelBtn.style.display = 'block';
+                    confirmBtn.onclick = null;
+                    cancelBtn.onclick = null;
+                    resolve();
+                };
+                
+                cancelBtn.onclick = () => {
+                    overlay.classList.remove('active');
+                    // Reset button text and visibility for future use
+                    confirmBtn.textContent = 'Confirm';
+                    cancelBtn.style.display = 'block';
+                    confirmBtn.onclick = null;
+                    cancelBtn.onclick = null;
+                    resolve();
+                };
+            });
+        }
+
+        function showLogin() {
+            document.getElementById('login-page').style.display = 'flex';
+            document.getElementById('dashboard-page').style.display = 'none';
+        }
+
+        function showDashboard() {
+            console.log('showDashboard called');
+            console.log('Session data:', sessionData);
+            
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'block';
+            
+            // Update user badge
+            document.getElementById('user-badge').textContent = 
+                sessionData.userType === 'admin' ? 'ADMINISTRATOR' : `CLIENT: ${sessionData.clientId}`;
+            
+            // Show admin tab for admin users
+            const isAdmin = sessionData.userType === 'admin';
+            console.log('Is admin:', isAdmin);
+            document.getElementById('admin-tab').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('clients-tab').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('admin-stats-grid').style.display = isAdmin ? 'grid' : 'none';
+            document.getElementById('client-stats-grid').style.display = isAdmin ? 'none' : 'grid';
+            
+            // Show client selection in search tab for admins
+            document.getElementById('search-client-group').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('products-client-select').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('add-product-client-group').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('edit-product-client-group').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('delete-product-client-group').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('bulk-upload-client-group').style.display = isAdmin ? 'block' : 'none';
+            
+            // Load initial data
+            console.log('Loading initial data...');
+            refreshStats();
+            refreshProducts();
+            if (isAdmin) {
+                refreshStatus();
+                loadClientList();
+                // Also load clients for search, products, add product, edit product, delete product, and bulk upload tabs
+                loadClientsForSearch();
+                loadClientsForProducts();
+                loadClientsForAddProduct();
+                loadClientsForEditProduct();
+                loadClientsForDeleteProduct();
+                loadClientsForBulkUpload();
+            }
+        }
+
+        async function loadClientsForSearch() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('search-client-select');
+                    select.innerHTML = '<option value="">Select a client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients for search:', error);
+            }
+        }
+
+        async function loadClientsForProducts() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('products-client-select');
+                    select.innerHTML = '<option value="">Select client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients for products:', error);
+            }
+        }
+
+        async function loadClientsForAddProduct() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('add-product-client-select');
+                    select.innerHTML = '<option value="">Select a client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients for add product:', error);
+            }
+        }
+
+        async function loadClientsForEditProduct() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('edit-product-client-select');
+                    select.innerHTML = '<option value="">Select a client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients for edit product:', error);
+            }
+        }
+
+        async function loadClientsForDeleteProduct() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('delete-product-client-select');
+                    select.innerHTML = '<option value="">Select a client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients for delete product:', error);
+            }
+        }
+
+        async function loadClientsForBulkUpload() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('bulk-upload-client-select');
+                    select.innerHTML = '<option value="">Select a client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading clients for bulk upload:', error);
+            }
+        }
+
+        async function handleBulkUpload() {
+            const mode = document.getElementById('bulk-upload-mode').value;
+            const fileInput = document.getElementById('bulk-upload-file');
+            const authCode = document.getElementById('bulk-upload-auth-code').value;
+            const targetClientSelect = document.getElementById('bulk-upload-client-select');
+            const targetClientId = targetClientSelect ? targetClientSelect.value : null;
+            
+            // Validate inputs
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showToast('Please select a CSV file to upload', 'error');
+                return;
+            }
+            
+            if (!authCode) {
+                showToast('Please enter your auth code for confirmation', 'error');
+                return;
+            }
+            
+            // For admins, require client selection
+            if (sessionData.userType === 'admin' && !targetClientId) {
+                showToast('Please select a target client', 'error');
+                return;
+            }
+            
+            // Confirm with user based on mode using custom modal
+            const confirmMessage = mode === 'replace' 
+                ? 'This will replace ALL existing products with the new data. Are you sure?'
+                : 'This will add new products to existing data. Continue?';
+            
+            // Use showModal instead of confirm
+            let confirmed = null; // null = waiting, true = confirmed, false = cancelled
+            showModal(
+                'Confirm Bulk Upload',
+                confirmMessage,
+                () => { confirmed = true; },
+                () => { confirmed = false; }
+            );
+            
+            // Wait for modal confirmation (polling for simplicity)
+            // In a real app, you might refactor showModal to return a Promise
+            await new Promise(resolve => {
+                const checkConfirm = setInterval(() => {
+                    if (confirmed !== null) {
+                        clearInterval(checkConfirm);
+                        resolve();
+                    }
+                }, 100);
+            });
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            // Show progress section
+            document.getElementById('upload-progress').style.display = 'block';
+            document.getElementById('upload-result').style.display = 'none';
+            updateProgress(0, 'Preparing upload...');
+            
+            // Show spinner
+            document.getElementById('progress-spinner').style.display = 'inline-block';
+            
+            try {
+                const formData = new FormData();
+                formData.append('session_id', sessionData.sessionId);
+                formData.append('mode', mode);
+                formData.append('file', fileInput.files[0]);
+                
+                if (targetClientId) {
+                    formData.append('client_id', targetClientId);
+                }
+                
+                // Use XMLHttpRequest for progress tracking
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        updateProgress(percentComplete, `Uploading... ${percentComplete}%`);
+                    }
+                });
+                
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            updateProgress(100, 'Processing complete!');
+                            
+                            // Hide spinner and show normal status
+                            document.getElementById('progress-spinner').style.display = 'none';
+                            
+                            // Show results
+                            const resultDiv = document.getElementById('upload-result');
+                            resultDiv.style.display = 'block';
+                            resultDiv.innerHTML = `
+                                <div style="color: var(--lime-400); margin-bottom: 8px;">
+                                    ✓ ${response.message}
+                                </div>
+                                <div>Inserted: ${response.inserted_count}</div>
+                                <div>Skipped: ${response.skipped_count}</div>
+                                ${response.skipped_products && response.skipped_products.length > 0 ? 
+                                    `<div style="margin-top: 8px;">Skipped products:</div>
+                                     <ul style="margin-left: 20px; margin-top: 4px;">
+                                        ${response.skipped_products.map(p => `<li>${p.product_id}: ${p.reason}</li>`).join('')}
+                                     </ul>` : ''}
+                            `;
+                            
+                            showToast('Bulk upload completed successfully', 'success');
+                            
+                            // Refresh products list
+                            refreshProducts();
+                            refreshStats();
+                        } else {
+                            updateProgress(0, 'Upload failed');
+                            document.getElementById('progress-spinner').style.display = 'none';
+                            document.getElementById('upload-result').style.display = 'block';
+                            document.getElementById('upload-result').innerHTML = 
+                                `<div style="color: var(--red-400);">Error: ${response.message || 'Upload failed'}</div>`;
+                            showToast('Upload failed: ' + (response.message || 'Unknown error'), 'error');
+                        }
+                    } else {
+                        updateProgress(0, 'Upload failed');
+                        document.getElementById('progress-spinner').style.display = 'none';
+                        document.getElementById('upload-result').style.display = 'block';
+                        document.getElementById('upload-result').innerHTML = 
+                            `<div style="color: var(--red-400);">Error: HTTP ${xhr.status} - ${xhr.statusText}</div>`;
+                        showToast('Upload failed: HTTP ' + xhr.status, 'error');
+                    }
+                });
+                
+                xhr.addEventListener('error', () => {
+                    updateProgress(0, 'Upload failed');
+                    document.getElementById('progress-spinner').style.display = 'none';
+                    document.getElementById('upload-result').style.display = 'block';
+                    document.getElementById('upload-result').innerHTML = 
+                        `<div style="color: var(--red-400);">Network error occurred</div>`;
+                    showToast('Network error occurred', 'error');
+                });
+                
+                // Update progress to show processing state after upload completes
+                xhr.upload.addEventListener('loadend', () => {
+                    updateProgress(90, 'Processing uploaded data...');
+                });
+                
+                xhr.open('POST', '/api/bulk-upload');
+                xhr.send(formData);
+                
+            } catch (error) {
+                console.error('Bulk upload error:', error);
+                updateProgress(0, 'Upload failed');
+                document.getElementById('progress-spinner').style.display = 'none';
+                document.getElementById('upload-result').style.display = 'block';
+                document.getElementById('upload-result').innerHTML = 
+                    `<div style="color: var(--red-400);">Error: ${error.message}</div>`;
+                showToast('Upload failed: ' + error.message, 'error');
+            }
+        }
+
+        function updateProgress(percent, status) {
+            document.getElementById('progress-percentage').textContent = percent + '%';
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = status;
+        }
+
+        function handleLogout() {
+            fetch('/api/logout?session_id=' + sessionData.sessionId);
+            localStorage.removeItem('vectra_session');
+            sessionData = { sessionId: null, userType: null, clientId: null };
+            showLogin();
+        }
+
+        async function refreshStats() {
+            console.log('refreshStats called');
+            try {
+                const response = await fetch('/api/stats?session_id=' + sessionData.sessionId);
+                console.log('Stats response status:', response.status);
+                const data = await response.json();
+                console.log('Stats data:', data);
+                
+                if (data.success) {
+                    if (sessionData.userType === 'admin') {
+                        document.getElementById('stat-products').textContent = data.stats.products;
+                        document.getElementById('stat-clients').textContent = data.stats.clients;
+                        document.getElementById('stat-collections').textContent = data.stats.collections;
+                        document.getElementById('stat-sync').textContent = data.stats.sync_rate;
+                    } else {
+                        document.getElementById('client-stat-products').textContent = data.stats.products;
+                        // Simple health check based on sync
+                        document.getElementById('client-stat-health').textContent = 
+                            data.stats.sqlite_products === data.stats.chromadb_products ? 'Healthy' : 'Sync Error';
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing stats:', error);
+            }
+        }
+
+        async function loadClientList() {
+            try {
+                // This is a simplified approach. Ideally, we fetch client list from /api/admin/status
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    const select = document.getElementById('rebuild-client-select');
+                    select.innerHTML = '<option value="">Select a client...</option>';
+                    data.clients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.client_id;
+                        option.textContent = client.client_id;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading client list:', error);
+            }
+        }
+
+        // Pagination state
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        let allProducts = [];
+
+        async function refreshProducts() {
+            try {
+                let url = '/api/products?session_id=' + sessionData.sessionId;
+                
+                // Add client_id parameter for admin users
+                if (sessionData.userType === 'admin') {
+                    const selectedClient = document.getElementById('products-client-select')?.value;
+                    if (selectedClient) {
+                        url += '&client_id=' + selectedClient;
+                    }
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allProducts = data.products;
+                    currentPage = 1;
+                    renderProductsPage();
+                } else {
+                    document.getElementById('products-table-container').innerHTML = 
+                        '<div class="no-data">No products found. Add your first product to get started.</div>';
+                    document.getElementById('products-pagination').innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error refreshing products:', error);
+            }
+        }
+
+        function renderProductsPage() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageProducts = allProducts.slice(startIndex, endIndex);
+            
+            if (pageProducts.length === 0) {
+                document.getElementById('products-table-container').innerHTML = 
+                    '<div class="no-data">No products found. Add your first product to get started.</div>';
+                document.getElementById('products-pagination').innerHTML = '';
+                return;
+            }
+
+            let html = '<table class="data-table"><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Brand</th><th>Price</th></tr></thead><tbody>';
+            
+            pageProducts.forEach(product => {
+                html += `<tr>
+                    <td>${product.product_id}</td>
+                    <td>${product.product_name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.brand}</td>
+                    <td>${product.price} ${product.currency}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('products-table-container').innerHTML = html;
+            
+            // Render pagination controls
+            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+            let paginationHtml = '';
+            
+            if (totalPages > 1) {
+                paginationHtml = `
+                    <button class="btn btn-secondary" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        Previous
+                    </button>
+                    <span style="color: var(--gray-400); padding: 8px 16px;">Page ${currentPage} of ${totalPages}</span>
+                    <button class="btn btn-secondary" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Next
+                    </button>
+                `;
+            }
+            
+            document.getElementById('products-pagination').innerHTML = paginationHtml;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderProductsPage();
+            }
+        }
+
+        async function searchProducts() {
+            const query = document.getElementById('search-query').value;
+            const maxResult = document.getElementById('search-max-result').value || 10;
+            const maxPrice = document.getElementById('search-max-price').value;
+            const minPrice = document.getElementById('search-min-price').value;
+            const category = document.getElementById('search-category').value;
+            const brand = document.getElementById('search-brand').value;
+            const useCase = document.getElementById('search-use-case').value;
+            const selectedClient = document.getElementById('search-client-select')?.value;
+            
+            const requestBody = {
+                query: query,
+                max_result: parseInt(maxResult)
+            };
+            
+            if (maxPrice) requestBody.max_price = parseFloat(maxPrice);
+            if (minPrice) requestBody.min_price = parseFloat(minPrice);
+            if (category) requestBody.category = category;
+            if (brand) requestBody.brand = brand;
+            if (useCase) requestBody.use_case = useCase;
+            
+            // Build URL with optional client_id parameter
+            let url = '/api/search?session_id=' + sessionData.sessionId;
+            if (selectedClient && sessionData.userType === 'admin') {
+                url += '&client_id=' + selectedClient;
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                
+                let html = '';
+                if (data.success && data.results.length > 0) {
+                    html = `<div style="margin-top: 16px;"><strong>${data.results.length} results found:</strong><br>`;
+                    data.results.forEach(result => {
+                        html += `<div style="background: var(--gray-900); padding: 12px; margin: 8px 0; border-radius: 4px; border-left: 3px solid var(--lime-400);">
+                            <strong>${result.product_name}</strong> by ${result.brand}
+                            <br><span style="color: var(--gray-500); font-size: 12px;">${result.category} • ${result.price} ${result.currency} ${result.freshness_warning ? '• ⚠️ Stale' : ''}</span>
+                        </div>`;
+                    });
+                    html += '</div>';
+                } else {
+                    html = '<div class="no-data">No results found.</div>';
+                }
+                
+                document.getElementById('search-results').innerHTML = html;
+            } catch (error) {
+                console.error('Error searching:', error);
+            }
+        }
+
+        async function addProduct() {
+            const product = {
+                product_id: document.getElementById('add-product-id').value,
+                product_name: document.getElementById('add-product-name').value,
+                category: document.getElementById('add-product-category').value,
+                subcategory: document.getElementById('add-product-subcategory').value,
+                brand: document.getElementById('add-product-brand').value,
+                price: parseFloat(document.getElementById('add-product-price').value),
+                currency: document.getElementById('add-product-currency').value,
+                specs: document.getElementById('add-product-specs').value || '',
+                description: document.getElementById('add-product-description').value || '',
+                use_case: document.getElementById('add-product-use-case').value || '',
+                product_url: document.getElementById('add-product-url').value || '',
+                last_updated: document.getElementById('add-product-updated').value
+            };
+            
+            let url = '/api/product?session_id=' + sessionData.sessionId;
+            
+            // Add client_id parameter for admin users
+            if (sessionData.userType === 'admin') {
+                const selectedClient = document.getElementById('add-product-client-select')?.value;
+                if (!selectedClient) {
+                    showToast('Please select a target client', 'error');
+                    return;
+                }
+                url += '&client_id=' + selectedClient;
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Product added successfully!', 'success');
+                    refreshProducts();
+                    refreshStats();
+                } else {
+                    showToast(data.message || 'Failed to add product', 'error');
+                }
+            } catch (error) {
+                showToast('Error adding product: ' + error.message, 'error');
+            }
+        }
+
+        // Edit Product Functions
+        async function loadProductForEdit() {
+            const productId = document.getElementById('edit-product-id').value;
+            if (!productId) {
+                showToast('Please enter a Product ID', 'info');
+                return;
+            }
+
+            try {
+                let url = '/api/products?session_id=' + sessionData.sessionId;
+                
+                // Add client_id parameter for admin users
+                if (sessionData.userType === 'admin') {
+                    const selectedClient = document.getElementById('edit-product-client-select')?.value;
+                    if (!selectedClient) {
+                        showToast('Please select a client', 'error');
+                        return;
+                    }
+                    url += '&client_id=' + selectedClient;
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success && data.products) {
+                    const product = data.products.find(p => p.product_id === productId);
+                    if (product) {
+                        document.getElementById('edit-product-name').value = product.product_name;
+                        document.getElementById('edit-product-category').value = product.category;
+                        document.getElementById('edit-product-subcategory').value = product.subcategory;
+                        document.getElementById('edit-product-brand').value = product.brand;
+                        document.getElementById('edit-product-price').value = product.price;
+                        document.getElementById('edit-product-currency').value = product.currency;
+                        document.getElementById('edit-product-updated').value = product.last_updated;
+                        document.getElementById('edit-product-specs').value = product.specs || '';
+                        document.getElementById('edit-product-description').value = product.description || '';
+                        document.getElementById('edit-product-use-case').value = product.use_case || '';
+                        document.getElementById('edit-product-url').value = product.product_url || '';
+                        
+                        document.getElementById('edit-form-container').style.display = 'block';
+                        showToast('Product loaded for editing', 'success');
+                    } else {
+                        showToast('Product not found', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+                showToast('Error loading product', 'error');
+            }
+        }
+
+        async function updateProduct() {
+            const productId = document.getElementById('edit-product-id').value;
+            const product = {
+                product_name: document.getElementById('edit-product-name').value,
+                category: document.getElementById('edit-product-category').value,
+                subcategory: document.getElementById('edit-product-subcategory').value,
+                brand: document.getElementById('edit-product-brand').value,
+                price: parseFloat(document.getElementById('edit-product-price').value),
+                currency: document.getElementById('edit-product-currency').value,
+                last_updated: document.getElementById('edit-product-updated').value,
+                specs: document.getElementById('edit-product-specs').value || '',
+                description: document.getElementById('edit-product-description').value || '',
+                use_case: document.getElementById('edit-product-use-case').value || '',
+                product_url: document.getElementById('edit-product-url').value || ''
+            };
+
+            let url = '';
+            let method = 'PUT';
+            
+            // Use admin endpoint for admin users
+            if (sessionData.userType === 'admin') {
+                const selectedClient = document.getElementById('edit-product-client-select')?.value;
+                if (!selectedClient) {
+                    showToast('Please select a client', 'error');
+                    return;
+                }
+                url = `/api/admin/product/${productId}?session_id=${sessionData.sessionId}&client_id=${selectedClient}`;
+            } else {
+                url = `/editProduct/${productId}?session_id=${sessionData.sessionId}`;
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Product updated successfully!', 'success');
+                    refreshProducts();
+                } else {
+                    showToast(data.message || 'Failed to update product', 'error');
+                }
+            } catch (error) {
+                showToast('Error updating product: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteSingleProduct() {
+            const productId = document.getElementById('delete-product-id').value;
+            const authCode = document.getElementById('delete-auth-code').value;
+
+            if (!productId) {
+                showToast('Please enter Product ID', 'info');
+                return;
+            }
+
+            // For admin users, no auth code required (session is sufficient)
+            // For regular users, auth code is required
+            if (sessionData.userType !== 'admin' && !authCode) {
+                showToast('Please enter Auth Code', 'info');
+                return;
+            }
+
+            showModal(
+                'Delete Product',
+                `Are you sure you want to delete product "${productId}"? This action cannot be undone.`,
+                async () => {
+            // Verify auth code first (only for non-admin users)
+            if (sessionData.userType !== 'admin') {
+                try {
+                    const loginResponse = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ client_id: sessionData.clientId, auth_code: authCode })
+                    });
+                    
+                    const loginData = await loginResponse.json();
+                    
+                    if (!loginData.success) {
+                        showToast('Invalid Auth Code', 'error');
+                        return;
+                    }
+                } catch (error) {
+                    showToast('Error verifying auth code', 'error');
+                    return;
+                }
+            }
+
+            try {
+                let url = `/api/product/${productId}?session_id=${sessionData.sessionId}`;
+                
+                // For admin users, add client_id parameter
+                if (sessionData.userType === 'admin') {
+                    const selectedClient = document.getElementById('delete-product-client-select')?.value;
+                    if (!selectedClient) {
+                        showToast('Please select a client', 'error');
+                        return;
+                    }
+                    url += `&client_id=${selectedClient}`;
+                }
+                
+                const response = await fetch(url, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Product deleted successfully!', 'success');
+                    refreshProducts();
+                    refreshStats();
+                    document.getElementById('delete-product-id').value = '';
+                    document.getElementById('delete-auth-code').value = '';
+                } else {
+                    showToast(data.message || 'Failed to delete product', 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting product: ' + error.message, 'error');
+            }
+        }
+            );
+        }
+
+        // Wrapper for table delete button (uses session auth, no extra prompt)
+        async function deleteProduct(productId) {
+            showModal(
+                'Delete Product',
+                `Are you sure you want to delete product "${productId}"? This action cannot be undone.`,
+                async () => {
+            try {
+                let url = `/api/product/${productId}?session_id=${sessionData.sessionId}`;
+                
+                // For admin users, we need to know which client's product to delete
+                // Since this is called from the products table, we should use the selected client from products tab
+                if (sessionData.userType === 'admin') {
+                    const selectedClient = document.getElementById('products-client-select')?.value;
+                    if (selectedClient) {
+                        url += `&client_id=${selectedClient}`;
+                    } else {
+                        showToast('Please select a client from the Products tab', 'error');
+                        return;
+                    }
+                }
+                
+                const response = await fetch(url, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Product deleted successfully!', 'success');
+                    refreshProducts();
+                    refreshStats();
+                } else {
+                    showToast(data.message || 'Failed to delete product', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showToast('Error deleting product', 'error');
+            }
+        }
+            );
+        }
+
+        async function clearAllProducts() {
+            const authCode = document.getElementById('delete-auth-code').value;
+            
+            // For admin users, auth code is optional (session is sufficient)
+            // For regular users, auth code is required
+            if (sessionData.userType !== 'admin' && !authCode) {
+                showToast('Please enter your Auth Code to confirm', 'info');
+                return;
+            }
+
+            showModal(
+                'Clear All Products',
+                'Are you sure you want to delete ALL products? This action cannot be undone!',
+                async () => {
+
+            try {
+                let url = `/api/products/all?session_id=${sessionData.sessionId}`;
+                
+                // For admin users, add client_id parameter
+                if (sessionData.userType === 'admin') {
+                    const selectedClient = document.getElementById('delete-product-client-select')?.value;
+                    if (!selectedClient) {
+                        showToast('Please select a client', 'error');
+                        return;
+                    }
+                    url += `&client_id=${selectedClient}`;
+                }
+                
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ auth_code: authCode })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('All products cleared!', 'success');
+                    refreshProducts();
+                    refreshStats();
+                    document.getElementById('delete-auth-code').value = '';
+                } else {
+                    showToast(data.message || 'Failed to clear products', 'error');
+                }
+            } catch (error) {
+                showToast('Error clearing products: ' + error.message, 'error');
+            }
+        }
+            );
+        }
+
+        // Clients Tab Functions
+        async function refreshClients() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success && data.clients) {
+                    let html = '<table class="data-table"><thead><tr><th>Client ID</th><th>Table Name</th><th>Collection Name</th><th>Products</th><th>Auth Code</th></tr></thead><tbody>';
+                    
+                    data.clients.forEach(client => {
+                        html += `<tr>
+                            <td>${client.client_id}</td>
+                            <td>${client.table_name}</td>
+                            <td>${client.collection_name}</td>
+                            <td>${client.product_count}</td>
+                            <td><input type="text" class="form-input" value="${client.auth_code || 'N/A'}" style="width: 150px;" onchange="updateClientAuth('${client.client_id}', this.value)"></td>
+                        </tr>`;
+                    });
+                    
+                    html += '</tbody></table>';
+                    document.getElementById('clients-table-container').innerHTML = html;
+                } else {
+                    document.getElementById('clients-table-container').innerHTML = 
+                        '<div class="no-data">No clients found.</div>';
+                }
+            } catch (error) {
+                console.error('Error refreshing clients:', error);
+                showToast('Error loading clients', 'error');
+            }
+        }
+
+        async function updateClientAuth(clientId, newAuthCode) {
+            showModal(
+                'Update Auth Code',
+                `Are you sure you want to update the auth code for client "${clientId}"?`,
+                async () => {
+                    try {
+                        const response = await fetch('/api/admin/client?session_id=' + sessionData.sessionId, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                client_id: clientId,
+                                auth_code: newAuthCode,
+                                operation: 'update'
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showToast('Auth code updated successfully!', 'success');
+                        } else {
+                            showToast(data.message || 'Failed to update auth code', 'error');
+                        }
+                    } catch (error) {
+                        showToast('Error updating auth code: ' + error.message, 'error');
+                    }
+                }
+            );
+        }
+
+        // Admin Functions
+        async function createClient() {
+            const clientId = document.getElementById('admin-client-id').value;
+            const authCode = document.getElementById('admin-client-auth').value;
+            
+            if (!clientId || !authCode) {
+                showToast('Please enter Client ID and Auth Code', 'info');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/client?session_id=' + sessionData.sessionId, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: clientId,
+                        auth_code: authCode,
+                        operation: 'create'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Client created successfully!', 'success');
+                    refreshStatus();
+                    loadClientList();
+                } else {
+                    showToast(data.message || 'Failed to create client', 'error');
+                }
+            } catch (error) {
+                showToast('Error creating client: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteClient() {
+            const clientId = document.getElementById('admin-client-id').value;
+            
+            if (!clientId) {
+                showToast('Please enter Client ID to delete', 'info');
+                return;
+            }
+            
+            showModal(
+                'Delete Client',
+                `Are you sure you want to delete client "${clientId}"? This will remove all their data!`,
+                async () => {
+            
+            try {
+                const response = await fetch('/api/admin/client?session_id=' + sessionData.sessionId, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: clientId,
+                        auth_code: 'placeholder',
+                        operation: 'delete'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Client deleted successfully!', 'success');
+                    refreshStatus();
+                    loadClientList();
+                } else {
+                    showToast(data.message || 'Failed to delete client', 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting client: ' + error.message, 'error');
+            }
+        }
+            );
+        }
+
+        async function rebuildCollection() {
+            const clientId = document.getElementById('rebuild-client-select').value;
+            if (!clientId) {
+                showToast('Please select a client', 'info');
+                return;
+            }
+
+            showModal(
+                'Rebuild Collection',
+                `Are you sure you want to rebuild the ChromaDB collection for "${clientId}"?`,
+                async () => {
+                    try {
+                        const response = await fetch('/api/rebuild?session_id=' + sessionData.sessionId, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ client_id: clientId })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showToast('Collection rebuilt successfully!', 'success');
+                            refreshStats();
+                        } else {
+                            showToast(data.message || 'Failed to rebuild', 'error');
+                        }
+                    } catch (error) {
+                        showToast('Error rebuilding collection: ' + error.message, 'error');
+                    }
+                }
+            );
+        }
+
+        async function fixDatabaseIssues() {
+            showModal(
+                'Fix Database Issues',
+                'Are you sure you want to fix database issues? This will clean orphaned collections.',
+                async () => {
+                    try {
+                        const response = await fetch('/api/fixDBissues?session_id=' + sessionData.sessionId, {
+                            method: 'POST'
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showToast(data.message || 'Database issues fixed!', 'success');
+                            refreshStatus();
+                        } else {
+                            showToast(data.message || 'Failed to fix issues', 'error');
+                        }
+                    } catch (error) {
+                        showToast('Error fixing database: ' + error.message, 'error');
+                    }
+                }
+            );
+        }
+
+        async function refreshStatus() {
+            try {
+                const response = await fetch('/api/admin/status?session_id=' + sessionData.sessionId);
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<div class="status-grid">';
+                    
+                    // Overall Health Section
+                    html += '<div class="status-section">';
+                    html += '<div class="status-header">Overall System Health</div>';
+                    html += '<div class="status-health ' + (data.sync_status.health === 'healthy' ? 'healthy' : 'warning') + '">';
+                    html += data.sync_status.health.toUpperCase();
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    // Database Comparison Section
+                    html += '<div class="status-section">';
+                    html += '<div class="status-header">Database Comparison</div>';
+                    html += '<div class="status-comparison">';
+                    html += '<div class="comparison-item">';
+                    html += '<span class="comparison-label">SQLite:</span>';
+                    html += '<span class="comparison-value">' + data.sqlite.total_products + ' products</span>';
+                    html += '</div>';
+                    html += '<div class="comparison-item">';
+                    html += '<span class="comparison-label">ChromaDB:</span>';
+                    html += '<span class="comparison-value">' + data.chromadb.total_products + ' products</span>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    // Sync Status Section
+                    html += '<div class="status-section">';
+                    html += '<div class="status-header">Sync Status</div>';
+                    html += '<div class="status-sync">';
+                    html += '<div class="sync-rate">' + data.sync_status.sync_rate + ' synced</div>';
+                    html += '<div class="sync-details">' + data.sync_status.synced_clients + '/' + data.sync_status.total_clients + ' clients</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    // Database Stats Section
+                    html += '<div class="status-section">';
+                    html += '<div class="status-header">Database Statistics</div>';
+                    html += '<div class="status-stats">';
+                    html += '<div class="stat-item">';
+                    html += '<span class="stat-label">Total Clients:</span>';
+                    html += '<span class="stat-value">' + data.sqlite.total_clients + '</span>';
+                    html += '</div>';
+                    html += '<div class="stat-item">';
+                    html += '<span class="stat-label">Total Collections:</span>';
+                    html += '<span class="stat-value">' + data.chromadb.total_collections + '</span>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    html += '</div>';
+                    
+                    document.getElementById('system-status-container').innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error refreshing status:', error);
+            }
+        }
+    </script>
+</body>
+</html>
