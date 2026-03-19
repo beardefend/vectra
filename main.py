@@ -3101,3 +3101,10 @@ async def admin_status_api(session_id: str = None):
     finally:
         if conn:
             conn.close()
+
+
+@app.get("/docs", include_in_schema=False)
+async def docs_redirect():
+    if config.REDIRECT_DOCS_TO_DASHBOARD:
+        return RedirectResponse(url="/dashboard")
+    return RedirectResponse(url="/docs")

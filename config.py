@@ -26,3 +26,8 @@ PORT = int(os.getenv("PORT", "8000"))
 # Server host
 # Can be set via HOST environment variable (default: 0.0.0.0 for Docker)
 HOST = os.getenv("HOST", "0.0.0.0")
+
+# Redirect /docs to /dashboard (default: true)
+# Can be set via REDIRECT_DOCS_TO_DASHBOARD environment variable
+REDIRECT_DOCS_TO_DASHBOARD = os.getenv("REDIRECT_DOCS_TO_DASHBOARD", "true").lower() == "true"
+# REDIRECT_DOCS_TO_DASHBOARD = os.getenv("REDIRECT_DOCS_TO_DASHBOARD", "false").lower() == "true"
