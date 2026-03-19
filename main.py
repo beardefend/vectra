@@ -21,6 +21,7 @@ from fastapi import FastAPI, Depends, HTTPException, status, Request, Response, 
 from fastapi.responses import JSONResponse
 from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -205,7 +206,8 @@ app = FastAPI(
     title="Vectra - BearDefend",
     description="Production-ready multi-tenant semantic search Engine",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url=None
 )
 
 # Add CORS middleware
@@ -3107,4 +3109,4 @@ async def admin_status_api(session_id: str = None):
 async def docs_redirect():
     if config.REDIRECT_DOCS_TO_DASHBOARD:
         return RedirectResponse(url="/dashboard")
-    return RedirectResponse(url="/docs")
+    return get_swagger_ui_html(openapi_url=app.openapi_url, title=app.title)
