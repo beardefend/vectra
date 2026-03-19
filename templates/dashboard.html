@@ -2103,6 +2103,7 @@
                 if (data.success) {
                     showToast('Product updated successfully!', 'success');
                     refreshProducts();
+                    refreshStats();
                 } else {
                     showToast(data.message || 'Failed to update product', 'error');
                 }
@@ -2331,6 +2332,7 @@
                         
                         if (data.success) {
                             showToast('Auth code updated successfully!', 'success');
+                            refreshClients();
                         } else {
                             showToast(data.message || 'Failed to update auth code', 'error');
                         }
@@ -2366,8 +2368,7 @@
                 
                 if (data.success) {
                     showToast('Client created successfully!', 'success');
-                    refreshStatus();
-                    loadClientList();
+                    refreshAllClientData();
                 } else {
                     showToast(data.message || 'Failed to create client', 'error');
                 }
@@ -2404,8 +2405,7 @@
                 
                 if (data.success) {
                     showToast('Client deleted successfully!', 'success');
-                    refreshStatus();
-                    loadClientList();
+                    refreshAllClientData();
                 } else {
                     showToast(data.message || 'Failed to delete client', 'error');
                 }
@@ -2464,6 +2464,7 @@
                         if (data.success) {
                             showToast(data.message || 'Database issues fixed!', 'success');
                             refreshStatus();
+                            refreshStats();
                         } else {
                             showToast(data.message || 'Failed to fix issues', 'error');
                         }
@@ -2472,6 +2473,19 @@
                     }
                 }
             );
+        }
+
+        async function refreshAllClientData() {
+            refreshStats();
+            refreshStatus();
+            loadClientList();
+            refreshClients();
+            loadClientsForSearch();
+            loadClientsForProducts();
+            loadClientsForAddProduct();
+            loadClientsForEditProduct();
+            loadClientsForDeleteProduct();
+            loadClientsForBulkUpload();
         }
 
         async function refreshStatus() {
